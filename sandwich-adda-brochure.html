@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sandwich Adda – Bread & Beyond</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C96A;
+    --gold-dim: #8A6F35;
+    --black: #080808;
+    --dark: #0F0F0F;
+    --charcoal: #1A1A1A;
+    --card: #111111;
+    --text: #F0E6CC;
+    --text-dim: #9A8A6A;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── Animated golden grain overlay ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: .4;
+  }
+
+  /* ── Radial ambient glow ── */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80vw;
+    height: 80vw;
+    background: radial-gradient(ellipse, rgba(201,168,76,.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 0 60px;
+  }
+
+  /* ── TOP DECORATIVE BORDER ── */
+  .top-border {
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0%, 100% { opacity: .7; }
+    50% { opacity: 1; }
+  }
+
+  /* ── HERO SECTION ── */
+  .hero {
+    width: 100%;
+    max-width: 480px;
+    padding: 48px 28px 36px;
+    text-align: center;
+    position: relative;
+  }
+
+  .logo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    border: 1.5px solid var(--gold);
+    background: radial-gradient(circle, #1E1A0F 0%, #0C0C0C 100%);
+    margin-bottom: 24px;
+    position: relative;
+    box-shadow: 0 0 30px rgba(201,168,76,.2), inset 0 0 20px rgba(201,168,76,.05);
+    animation: pulse-glow 4s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 30px rgba(201,168,76,.2), inset 0 0 20px rgba(201,168,76,.05); }
+    50% { box-shadow: 0 0 50px rgba(201,168,76,.35), inset 0 0 20px rgba(201,168,76,.1); }
+  }
+
+  .logo-badge svg {
+    width: 44px;
+    height: 44px;
+    fill: var(--gold);
+    opacity: .9;
+  }
+
+  .brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.6rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #C9A84C 0%, #F0D87A 45%, #C9A84C 75%, #8A6F35 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fade-down .8s ease both;
+  }
+
+  .tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--gold-dim);
+    letter-spacing: 0.18em;
+    margin-top: 6px;
+    margin-bottom: 28px;
+    animation: fade-down .9s ease .1s both;
+  }
+
+  /* thin golden rule */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 auto 28px;
+    width: 80%;
+    animation: fade-down 1s ease .2s both;
+  }
+  .divider-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-dim)); }
+  .divider-line.right { background: linear-gradient(90deg, var(--gold-dim), transparent); }
+  .divider-diamond {
+    width: 6px; height: 6px;
+    background: var(--gold);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  /* ── INFO CARD ── */
+  .info-card {
+    background: var(--card);
+    border: 1px solid rgba(201,168,76,.2);
+    border-radius: 12px;
+    padding: 22px 24px;
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto 40px;
+    position: relative;
+    overflow: hidden;
+    animation: fade-up 1s ease .3s both;
+  }
+
+  .info-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(201,168,76,.08);
+  }
+  .info-row:last-child { border-bottom: none; }
+
+  .info-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(201,168,76,.08);
+    border: 1px solid rgba(201,168,76,.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .info-icon svg { width: 16px; height: 16px; stroke: var(--gold); fill: none; stroke-width: 1.8; }
+
+  .info-label {
+    font-size: .65rem;
+    font-weight: 600;
+    letter-spacing: .14em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .info-value {
+    font-size: .85rem;
+    color: var(--text);
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  /* ── FOOD GRAPHICS STRIP ── */
+  .food-strip {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 40px;
+    animation: fade-up 1s ease .4s both;
+    font-size: 1.9rem;
+    letter-spacing: .05em;
+    filter: drop-shadow(0 0 8px rgba(201,168,76,.4));
+  }
+
+  /* ── ACTION BUTTONS ── */
+  .buttons-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    width: 100%;
+    max-width: 440px;
+    padding: 0 24px;
+    animation: fade-up 1s ease .5s both;
+  }
+
+  .btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px 12px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .btn:hover { transform: translateY(-3px); }
+  .btn:active { transform: translateY(0); }
+
+  .btn svg { width: 26px; height: 26px; }
+
+  /* Menu */
+  .btn-menu {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, #1A1400 0%, #2A2000 50%, #1A1400 100%);
+    border: 1px solid var(--gold);
+    color: var(--gold-light);
+    box-shadow: 0 4px 24px rgba(201,168,76,.2), inset 0 1px 0 rgba(201,168,76,.15);
+    flex-direction: row;
+    gap: 14px;
+    padding: 22px 28px;
+    font-size: .8rem;
+  }
+  .btn-menu:hover { box-shadow: 0 8px 36px rgba(201,168,76,.35), inset 0 1px 0 rgba(201,168,76,.25); }
+  .btn-menu svg { stroke: var(--gold); fill: none; stroke-width: 1.8; width: 22px; height: 22px; }
+
+  /* Location */
+  .btn-location {
+    background: var(--charcoal);
+    border: 1px solid rgba(201,168,76,.25);
+    color: var(--text);
+    box-shadow: 0 4px 16px rgba(0,0,0,.4);
+  }
+  .btn-location:hover { border-color: var(--gold); box-shadow: 0 6px 24px rgba(201,168,76,.15); }
+  .btn-location svg { stroke: var(--gold); fill: none; stroke-width: 1.8; }
+
+  /* Call */
+  .btn-call {
+    background: var(--charcoal);
+    border: 1px solid rgba(201,168,76,.25);
+    color: var(--text);
+    box-shadow: 0 4px 16px rgba(0,0,0,.4);
+  }
+  .btn-call:hover { border-color: var(--gold); box-shadow: 0 6px 24px rgba(201,168,76,.15); }
+  .btn-call svg { stroke: var(--gold); fill: none; stroke-width: 1.8; }
+
+  /* WhatsApp */
+  .btn-whatsapp {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, #0A1A0D 0%, #0D200F 50%, #0A1A0D 100%);
+    border: 1px solid rgba(37,211,102,.35);
+    color: #7FE8A0;
+    box-shadow: 0 4px 20px rgba(37,211,102,.1);
+    flex-direction: row;
+    gap: 14px;
+    padding: 20px 28px;
+    font-size: .78rem;
+  }
+  .btn-whatsapp:hover { box-shadow: 0 6px 30px rgba(37,211,102,.2); border-color: rgba(37,211,102,.6); }
+  .btn-whatsapp svg { fill: #25D366; width: 24px; height: 24px; }
+
+  /* ── BOTTOM ORNAMENT ── */
+  .bottom-ornament {
+    margin-top: 48px;
+    text-align: center;
+    animation: fade-up 1s ease .7s both;
+  }
+  .bottom-ornament .ornament-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: .8rem;
+    color: var(--text-dim);
+    letter-spacing: .1em;
+  }
+
+  .bottom-border {
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
+    margin-top: auto;
+    animation: shimmer 3s ease-in-out infinite;
+    position: fixed;
+    bottom: 0;
+  }
+
+  @keyframes fade-down {
+    from { opacity: 0; transform: translateY(-18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-border"></div>
+
+<div class="wrapper">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="logo-badge">
+      <!-- Sandwich / fork icon -->
+      <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="8" width="30" height="5" rx="2.5"/>
+        <rect x="8" y="16" width="24" height="3" rx="1.5"/>
+        <rect x="6" y="22" width="28" height="3" rx="1.5"/>
+        <rect x="5" y="28" width="30" height="5" rx="2.5"/>
+      </svg>
+    </div>
+
+    <h1 class="brand-name">SANDWICH<br>ADDA</h1>
+    <p class="tagline">Bread &amp; Beyond</p>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-diamond"></div>
+      <div class="divider-line right"></div>
+    </div>
+  </div>
+
+  <!-- INFO CARD -->
+  <div class="info-card">
+    <!-- Timings -->
+    <div class="info-row">
+      <div class="info-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 15.5"/></svg>
+      </div>
+      <div>
+        <div class="info-label">Hours</div>
+        <div class="info-value">2:00 PM – 12:00 AM (Midnight)</div>
+      </div>
+    </div>
+    <!-- Location -->
+    <div class="info-row">
+      <div class="info-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+      </div>
+      <div>
+        <div class="info-label">Location</div>
+        <div class="info-value">Shop No. 2, TPS Road, Opp. Veer Savarkar Garden,<br>Babhai Naka, Borivali West, Mumbai 400092</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOD EMOJI STRIP -->
+  <div class="food-strip" aria-hidden="true">
+    🥪 &nbsp; 🍕 &nbsp; 🧄 &nbsp; 🥖 &nbsp; 🧀
+  </div>
+
+  <!-- ACTION BUTTONS -->
+  <div class="buttons-grid">
+
+    <!-- MENU -->
+    <a href="sandwich-adda-menu.html" class="btn btn-menu">
+      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+      VIEW FULL MENU
+    </a>
+
+    <!-- LOCATION -->
+    <a href="https://maps.app.goo.gl/WTghQ1BCL4zizQTa9?g_st=ac" target="_blank" class="btn btn-location">
+      <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+      DIRECTIONS
+    </a>
+
+    <!-- CALL -->
+    <a href="tel:+919820286570" class="btn btn-call">
+      <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.81 19.79 19.79 0 01.0 2.18 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
+      CALL NOW
+    </a>
+
+    <!-- WHATSAPP -->
+    <a href="https://wa.me/919820286570" target="_blank" class="btn btn-whatsapp">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      ORDER ON WHATSAPP
+    </a>
+
+  </div>
+
+  <!-- BOTTOM ORNAMENT -->
+  <div class="bottom-ornament">
+    <div class="divider" style="margin-bottom:12px;">
+      <div class="divider-line"></div>
+      <div class="divider-diamond"></div>
+      <div class="divider-line right"></div>
+    </div>
+    <p class="ornament-text">Pure Veg · Mumbai's Finest Grill &amp; Sandwiches</p>
+  </div>
+
+</div>
+
+<div class="bottom-border"></div>
+
+</body>
+</html>

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menu – Sandwich Adda</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C96A;
+    --gold-dim: #7A6535;
+    --black: #070707;
+    --dark: #0D0D0D;
+    --charcoal: #161616;
+    --card: #101010;
+    --text: #EEE4CC;
+    --text-muted: #786850;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Montserrat', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* grain */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: .5;
+  }
+
+  /* top glow */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -30%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70vw;
+    height: 60vw;
+    background: radial-gradient(ellipse, rgba(201,168,76,.07) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─────────── GOLD BORDER ─────────── */
+  .border-top, .border-bottom {
+    position: fixed;
+    left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
+    z-index: 100;
+    animation: shimmer 4s ease-in-out infinite;
+  }
+  .border-top { top: 0; }
+  .border-bottom { bottom: 0; }
+
+  @keyframes shimmer {
+    0%, 100% { opacity: .65; }
+    50% { opacity: 1; }
+  }
+
+  /* ─────────── BACK BUTTON ─────────── */
+  .back-btn {
+    position: fixed;
+    top: 18px;
+    left: 18px;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 8px;
+    background: rgba(10,10,10,.85);
+    border: 1px solid rgba(201,168,76,.3);
+    color: var(--gold);
+    font-size: .65rem;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    backdrop-filter: blur(8px);
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .back-btn:hover { border-color: var(--gold); box-shadow: 0 0 16px rgba(201,168,76,.2); }
+  .back-btn svg { width: 14px; height: 14px; stroke: var(--gold); fill: none; stroke-width: 2.2; }
+
+  /* ─────────── WRAPPER ─────────── */
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 80px 22px 80px;
+  }
+
+  /* ─────────── HEADER ─────────── */
+  .header {
+    text-align: center;
+    padding-bottom: 40px;
+    animation: fade-down .8s ease both;
+  }
+
+  .header-icon {
+    font-size: 2.4rem;
+    display: block;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 0 10px rgba(201,168,76,.5));
+  }
+
+  .brand {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 7vw, 2.8rem);
+    font-weight: 900;
+    letter-spacing: .06em;
+    background: linear-gradient(135deg, #8A6F35 0%, #C9A84C 30%, #F0D87A 55%, #C9A84C 75%, #8A6F35 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.05;
+  }
+
+  .sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--gold-dim);
+    letter-spacing: .22em;
+    margin-top: 6px;
+    margin-bottom: 24px;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 auto;
+    width: 70%;
+  }
+  .d-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-dim)); }
+  .d-line.r { background: linear-gradient(90deg, var(--gold-dim), transparent); }
+  .d-dia { width: 5px; height: 5px; background: var(--gold); transform: rotate(45deg); flex-shrink: 0; }
+
+  /* ─────────── CATEGORY NAV ─────────── */
+  .cat-nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 0 0 16px;
+    margin-bottom: 36px;
+    scrollbar-width: none;
+    animation: fade-up .9s ease .15s both;
+    -webkit-overflow-scrolling: touch;
+  }
+  .cat-nav::-webkit-scrollbar { display: none; }
+
+  .cat-pill {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    border-radius: 30px;
+    border: 1px solid rgba(201,168,76,.25);
+    background: var(--charcoal);
+    color: var(--text-muted);
+    font-size: .65rem;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .2s;
+  }
+  .cat-pill:hover, .cat-pill.active {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(201,168,76,.06);
+  }
+
+  /* ─────────── SECTION ─────────── */
+  .menu-section {
+    margin-bottom: 52px;
+    animation: fade-up .9s ease both;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .section-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--gold-dim), transparent); }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: .18em;
+    color: var(--gold);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .section-icon { font-size: 1.2rem; flex-shrink: 0; }
+
+  /* ─────────── ITEM ─────────── */
+  .item-list { display: flex; flex-direction: column; gap: 2px; }
+
+  .item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 16px;
+    border-radius: 8px;
+    background: transparent;
+    border: 1px solid transparent;
+    transition: background .2s, border-color .2s;
+    gap: 12px;
+  }
+  .item:hover {
+    background: rgba(201,168,76,.04);
+    border-color: rgba(201,168,76,.12);
+  }
+
+  .item-name {
+    font-size: .82rem;
+    font-weight: 400;
+    color: var(--text);
+    letter-spacing: .02em;
+    line-height: 1.4;
+  }
+
+  .item-tags {
+    display: flex;
+    gap: 4px;
+    margin-top: 3px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-size: .54rem;
+    letter-spacing: .1em;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .tag-jain { background: rgba(100,200,100,.1); color: #88d888; border: 1px solid rgba(100,200,100,.2); }
+  .tag-spicy { background: rgba(220,80,50,.1); color: #e88080; border: 1px solid rgba(220,80,50,.2); }
+  .tag-special { background: rgba(201,168,76,.1); color: var(--gold); border: 1px solid rgba(201,168,76,.25); }
+  .tag-choco { background: rgba(120,70,40,.15); color: #d4a87a; border: 1px solid rgba(120,70,40,.3); }
+
+  .item-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--gold);
+    white-space: nowrap;
+    letter-spacing: .04em;
+    flex-shrink: 0;
+  }
+
+  /* ─────────── NOTE BOX ─────────── */
+  .note-box {
+    margin-top: 8px;
+    padding: 16px 20px;
+    border-radius: 10px;
+    background: rgba(201,168,76,.05);
+    border: 1px solid rgba(201,168,76,.2);
+    position: relative;
+    overflow: hidden;
+  }
+  .note-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .note-box p {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: .92rem;
+    color: var(--gold);
+    letter-spacing: .05em;
+    text-align: center;
+  }
+
+  /* ─────────── CONTACT FOOTER ─────────── */
+  .contact-footer {
+    text-align: center;
+    margin-top: 52px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(201,168,76,.12);
+    animation: fade-up 1s ease both;
+  }
+
+  .contact-footer .label {
+    font-size: .62rem;
+    font-weight: 600;
+    letter-spacing: .18em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .contact-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .contact-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    transition: all .2s;
+  }
+  .contact-btn svg { width: 16px; height: 16px; }
+
+  .cb-call {
+    background: var(--charcoal);
+    border: 1px solid rgba(201,168,76,.3);
+    color: var(--gold);
+  }
+  .cb-call:hover { border-color: var(--gold); box-shadow: 0 0 16px rgba(201,168,76,.15); }
+  .cb-call svg { stroke: var(--gold); fill: none; stroke-width: 1.8; }
+
+  .cb-wa {
+    background: rgba(10,26,13,.8);
+    border: 1px solid rgba(37,211,102,.3);
+    color: #7FE8A0;
+  }
+  .cb-wa:hover { border-color: rgba(37,211,102,.6); box-shadow: 0 0 16px rgba(37,211,102,.12); }
+  .cb-wa svg { fill: #25D366; }
+
+  .footer-brand {
+    margin-top: 28px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: .8rem;
+    color: rgba(201,168,76,.3);
+    letter-spacing: .1em;
+  }
+
+  @keyframes fade-down {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="border-top"></div>
+<div class="border-bottom"></div>
+
+<a href="sandwich-adda-brochure.html" class="back-btn">
+  <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+  Back
+</a>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <span class="header-icon">🥪</span>
+    <div class="brand">SANDWICH ADDA</div>
+    <div class="sub">Bread &amp; Beyond</div>
+    <div class="divider">
+      <div class="d-line"></div>
+      <div class="d-dia"></div>
+      <div class="d-line r"></div>
+    </div>
+  </div>
+
+  <!-- CATEGORY NAV -->
+  <nav class="cat-nav">
+    <a href="#sandwiches" class="cat-pill">🥪 Sandwiches</a>
+    <a href="#grill" class="cat-pill">🔥 Grill</a>
+    <a href="#pizza" class="cat-pill">🍕 Pizza</a>
+    <a href="#garlic" class="cat-pill">🧄 Garlic Bread</a>
+  </nav>
+
+  <!-- ── SANDWICHES ── -->
+  <section class="menu-section" id="sandwiches" style="animation-delay:.1s">
+    <div class="section-head">
+      <span class="section-icon">🥪</span>
+      <span class="section-title">Sandwiches</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="item-list">
+      <div class="item"><span class="item-name">Bread Butter</span><span class="item-price">₹25</span></div>
+      <div class="item"><span class="item-name">Bread Butter Cheese</span><span class="item-price">₹50</span></div>
+      <div class="item"><span class="item-name">Aloo Slice</span><span class="item-price">₹30</span></div>
+      <div class="item"><span class="item-name">Cheese Aloo Slice</span><span class="item-price">₹60</span></div>
+      <div class="item"><span class="item-name">Veg Sandwich</span><span class="item-price">₹40</span></div>
+      <div class="item"><span class="item-name">Veg Cheese Sandwich</span><span class="item-price">₹70</span></div>
+      <div class="item">
+        <div><span class="item-name">Jain Sandwich</span><div class="item-tags"><span class="tag tag-jain">Jain</span></div></div>
+        <span class="item-price">₹40</span>
+      </div>
+      <div class="item">
+        <div><span class="item-name">Jain Cheese Sandwich</span><div class="item-tags"><span class="tag tag-jain">Jain</span></div></div>
+        <span class="item-price">₹70</span>
+      </div>
+      <div class="item"><span class="item-name">Masala Toast</span><span class="item-price">₹50</span></div>
+      <div class="item"><span class="item-name">Veg Toast</span><span class="item-price">₹50</span></div>
+      <div class="item">
+        <div><span class="item-name">Jain Veg Toast</span><div class="item-tags"><span class="tag tag-jain">Jain</span></div></div>
+        <span class="item-price">₹50</span>
+      </div>
+      <div class="item"><span class="item-name">Masala Cheese Toast</span><span class="item-price">₹80</span></div>
+      <div class="item"><span class="item-name">Veg Cheese Toast</span><span class="item-price">₹80</span></div>
+      <div class="item">
+        <div><span class="item-name">Jain Veg Cheese Toast</span><div class="item-tags"><span class="tag tag-jain">Jain</span></div></div>
+        <span class="item-price">₹80</span>
+      </div>
+      <div class="item"><span class="item-name">Cheese Chilly Toast</span><span class="item-price">₹90</span></div>
+      <div class="item">
+        <div><span class="item-name">Jain Cheese Chilly Toast</span><div class="item-tags"><span class="tag tag-jain">Jain</span></div></div>
+        <span class="item-price">₹90</span>
+      </div>
+      <div class="item"><span class="item-name">Aloo Toast</span><span class="item-price">₹40</span></div>
+      <div class="item"><span class="item-name">Cheese Aloo Toast</span><span class="item-price">₹70</span></div>
+      <div class="item"><span class="item-name">Jaam Slice</span><span class="item-price">₹40</span></div>
+      <div class="item"><span class="item-name">Jaam Aloo Slice</span><span class="item-price">₹50</span></div>
+      <div class="item">
+        <div><span class="item-name">Chocolate Toast</span><div class="item-tags"><span class="tag tag-choco">Chocolate</span></div></div>
+        <span class="item-price">₹90</span>
+      </div>
+      <div class="item">
+        <div><span class="item-name">Chocolate Cheese Toast</span><div class="item-tags"><span class="tag tag-choco">Chocolate</span></div></div>
+        <span class="item-price">₹120</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── GRILL ── -->
+  <section class="menu-section" id="grill" style="animation-delay:.2s">
+    <div class="section-head">
+      <span class="section-icon">🔥</span>
+      <span class="section-title">Grill</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="item-list">
+      <div class="item"><span class="item-name">Veg Grill</span><span class="item-price">₹120</span></div>
+      <div class="item"><span class="item-name">Veg Cheese Grill</span><span class="item-price">₹150</span></div>
+      <div class="item">
+        <div><span class="item-name">Jain Grill</span><div class="item-tags"><span class="tag tag-jain">Jain</span></div></div>
+        <span class="item-price">₹120</span>
+      </div>
+      <div class="item">
+        <div><span class="item-name">Jain Cheese Grill</span><div class="item-tags"><span class="tag tag-jain">Jain</span></div></div>
+        <span class="item-price">₹150</span>
+      </div>
+      <div class="item">
+        <div><span class="item-name">Jain Cheese Chilly Grill</span><div class="item-tags"><span class="tag tag-jain">Jain</span></div></div>
+        <span class="item-price">₹180</span>
+      </div>
+      <div class="item"><span class="item-name">Masala Grill</span><span class="item-price">₹150</span></div>
+      <div class="item"><span class="item-name">Masala Cheese Grill</span><span class="item-price">₹180</span></div>
+      <div class="item"><span class="item-name">Cheese Chilly Grill</span><span class="item-price">₹180</span></div>
+      <div class="item"><span class="item-name">Masala Cheese Chilly Grill</span><span class="item-price">₹200</span></div>
+      <div class="item"><span class="item-name">Italian Grill</span><span class="item-price">₹200</span></div>
+      <div class="item">
+        <div><span class="item-name">Mexican Grill</span><div class="item-tags"><span class="tag tag-spicy">Spicy</span></div></div>
+        <span class="item-price">₹200</span>
+      </div>
+      <div class="item">
+        <div><span class="item-name">Panini Grill</span><div class="item-tags"><span class="tag tag-special">Multigrain</span></div></div>
+        <span class="item-price">₹280</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PIZZA ── -->
+  <section class="menu-section" id="pizza" style="animation-delay:.3s">
+    <div class="section-head">
+      <span class="section-icon">🍕</span>
+      <span class="section-title">Pizza</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="item-list">
+      <div class="item"><span class="item-name">Veg Cheese Pizza</span><span class="item-price">₹150</span></div>
+      <div class="item">
+        <div><span class="item-name">Jain Veg Cheese Pizza</span><div class="item-tags"><span class="tag tag-jain">Jain</span></div></div>
+        <span class="item-price">₹150</span>
+      </div>
+      <div class="item"><span class="item-name">Margherita Pizza</span><span class="item-price">₹140</span></div>
+      <div class="item"><span class="item-name">Cheese Chilly Pizza</span><span class="item-price">₹170</span></div>
+      <div class="item"><span class="item-name">Corn &amp; Cheese Pizza</span><span class="item-price">₹150</span></div>
+      <div class="item"><span class="item-name">Italian Pizza</span><span class="item-price">₹180</span></div>
+      <div class="item">
+        <div><span class="item-name">Mexican Pizza</span><div class="item-tags"><span class="tag tag-spicy">Spicy</span></div></div>
+        <span class="item-price">₹180</span>
+      </div>
+      <div class="item"><span class="item-name">Panini Pizza</span><span class="item-price">₹200</span></div>
+      <div class="item">
+        <div><span class="item-name">Adda Special Pizza</span><div class="item-tags"><span class="tag tag-special">Cheese Burst</span></div></div>
+        <span class="item-price">₹250</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── GARLIC BREAD ── -->
+  <section class="menu-section" id="garlic" style="animation-delay:.4s">
+    <div class="section-head">
+      <span class="section-icon">🧄</span>
+      <span class="section-title">Garlic Bread</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="item-list">
+      <div class="item"><span class="item-name">Cheese Garlic Bread</span><span class="item-price">₹130</span></div>
+      <div class="item"><span class="item-name">Corn &amp; Cheese Garlic Bread</span><span class="item-price">₹150</span></div>
+      <div class="item"><span class="item-name">Cheese Chilly Garlic Bread</span><span class="item-price">₹170</span></div>
+      <div class="item"><span class="item-name">Italian Garlic Bread</span><span class="item-price">₹180</span></div>
+      <div class="item">
+        <div><span class="item-name">Mexican Garlic Bread</span><div class="item-tags"><span class="tag tag-spicy">Spicy</span></div></div>
+        <span class="item-price">₹180</span>
+      </div>
+      <div class="item"><span class="item-name">Panini Garlic Bread</span><span class="item-price">₹200</span></div>
+    </div>
+  </section>
+
+  <!-- NOTE -->
+  <div class="note-box">
+    <p>✦ &nbsp; ₹10 extra for Garlic Butter / Mayo / Schezwan &nbsp; ✦</p>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="contact-footer">
+    <p class="label">Order or Enquire</p>
+    <div class="contact-actions">
+      <a href="tel:+919820286570" class="contact-btn cb-call">
+        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.81 19.79 19.79 0 010 2.18 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
+        98202 86570
+      </a>
+      <a href="https://wa.me/919820286570" target="_blank" class="contact-btn cb-wa">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        WhatsApp Order
+      </a>
+    </div>
+    <p class="footer-brand">Sandwich Adda · Borivali West, Mumbai</p>
+  </div>
+
+</div>
+
+</body>
+</html>
